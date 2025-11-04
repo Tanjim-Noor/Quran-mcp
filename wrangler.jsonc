@@ -42,7 +42,8 @@
 	"kv_namespaces": [
 		{
 			"binding": "OAUTH_KV",
-			"id": "<Add-KV-ID>"
+			"id": "1d976dc1971d4e5cb93e31ac8c1fe184",
+			"remote": true
 		}
 	],
 	"ai": {
