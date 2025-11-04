@@ -1,0 +1,9 @@
+{
+	"servers": {
+		"https://quran-mcp.rubiccube1234.workers.dev": {
+			"url": "https://quran-mcp.rubiccube1234.workers.dev/sse",
+			"type": "http"
+		}
+	},
+	"inputs": []
+}
