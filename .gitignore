@@ -160,6 +160,8 @@ dist
 
 # yarn v2
 
+knowledge-base/
+
 .yarn/cache
 .yarn/unplugged
 .yarn/build-state.yml
