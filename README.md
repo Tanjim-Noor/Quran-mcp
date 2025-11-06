@@ -1,103 +1,226 @@
-# Model Context Protocol (MCP) Server + Github OAuth
+# Quran MCP Server with OAuth Authentication
 
-This is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server that supports remote MCP connections, with Github OAuth built-in.
+This is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server that provides access to the Quran Foundation API with GitHub OAuth authentication. Users can query Quranic verses, translations, tafsir (commentary), and more through natural language interactions.
 
-You can deploy it to your own Cloudflare account, and after you create your own Github OAuth client app, you'll have a fully functional remote MCP server that you can build off. Users will be able to connect to your MCP server by signing in with their GitHub account.
+## 🕌 Features
 
-You can use this as a reference example for how to integrate other OAuth providers with an MCP server deployed to Cloudflare, using the [`workers-oauth-provider` library](https://github.com/cloudflare/workers-oauth-provider).
+- **Verse Retrieval**: Fetch any verse with Arabic text, translations, and metadata
+- **Multiple Translations**: Support for 100+ translations in various languages
+- **Word-by-Word Analysis**: Get detailed word breakdowns of verses
+- **Tafsir (Commentary)**: Access scholarly interpretations and explanations
+- **OAuth Authentication**: Secure access control via GitHub OAuth
+- **Cloudflare Workers**: Fast, globally distributed serverless deployment
 
-The MCP server (powered by [Cloudflare Workers](https://developers.cloudflare.com/workers/)):
+## 🚀 Available Tools
 
-* Acts as OAuth _Server_ to your MCP clients
-* Acts as OAuth _Client_ to your _real_ OAuth server (in this case, GitHub)
+### `getVerse`
+Fetch Quranic verses with optional translations, word analysis, and tafsir.
 
-> [!WARNING]
-> This is a demo template designed to help you get started quickly. While we have implemented several security controls, **you must implement all preventive and defense-in-depth security measures before deploying to production**. Please review our comprehensive security guide: [Securing MCP Servers](https://github.com/cloudflare/agents/blob/main/docs/securing-mcp-servers.md)
+**Example queries:**
+- "Get verse 2:255 from the Quran" (Ayat al-Kursi)
+- "Show me verse 1:1 with English translation"
+- "Get verse 112:1 with word-by-word breakdown"
 
-## Getting Started
+See [src/quran/README.md](src/quran/README.md) for detailed documentation.
 
-Clone the repo directly & install dependencies: `npm install`.
+## 📋 Prerequisites
 
-Alternatively, you can use the command line below to get the remote MCP Server created on your local machine:
+You'll need:
+1. **GitHub OAuth App** - For user authentication
+2. **Quran Foundation API Credentials** - [Request access here](https://quran.foundation/api-access)
+3. **Cloudflare Account** - For deployment
+
+## 🛠️ Setup
+
+### 1. Install Dependencies
+
+Clone the repo directly & install dependencies:
 ```bash
-npm create cloudflare@latest -- my-mcp-server --template=cloudflare/ai/demos/remote-mcp-github-oauth
+git clone <your-repo>
+cd quran-mcp
+pnpm install
 ```
 
-### For Production
+### 2. Configure Secrets
+
+Set up your API credentials and secrets:
+#### GitHub OAuth App Setup
+
 Create a new [GitHub OAuth App](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app): 
-- For the Homepage URL, specify `https://mcp-github-oauth.<your-subdomain>.workers.dev`
-- For the Authorization callback URL, specify `https://mcp-github-oauth.<your-subdomain>.workers.dev/callback`
-- Note your Client ID and generate a Client secret. 
-- Set secrets via Wrangler
+- Homepage URL: `https://quran-mcp.<your-subdomain>.workers.dev`
+- Authorization callback URL: `https://quran-mcp.<your-subdomain>.workers.dev/callback`
+- Note your Client ID and generate a Client secret
+
+#### Quran Foundation API
+
+Request API credentials from [Quran Foundation](https://quran.foundation/api-access)
+
+#### Set Secrets via Wrangler
+
 ```bash
-wrangler secret put GITHUB_CLIENT_ID
-wrangler secret put GITHUB_CLIENT_SECRET
-wrangler secret put COOKIE_ENCRYPTION_KEY # add any random string here e.g. openssl rand -hex 32
+# GitHub OAuth
+npx wrangler secret put GITHUB_CLIENT_ID
+npx wrangler secret put GITHUB_CLIENT_SECRET
+npx wrangler secret put COOKIE_ENCRYPTION_KEY  # Generate: openssl rand -hex 32
+
+# Quran Foundation API
+npx wrangler secret put QURAN_CLIENT_ID
+npx wrangler secret put QURAN_CLIENT_SECRET
 ```
 
 > [!IMPORTANT]
 > When you create the first secret, Wrangler will ask if you want to create a new Worker. Submit "Y" to create a new Worker and save the secret.
 
-#### Set up a KV namespace
-- Create the KV namespace: 
-`wrangler kv namespace create "OAUTH_KV"`
-- Update the Wrangler file with the KV ID
+### 3. Set up KV Namespace
 
-#### Deploy & Test
-Deploy the MCP server to make it available on your workers.dev domain 
-` wrangler deploy`
+Create the KV namespace for OAuth state storage:
+```bash
+npx wrangler kv namespace create "OAUTH_KV"
+```
+
+Update `wrangler.jsonc` with the generated KV ID.
+
+### 4. Test the SDK (Optional but Recommended)
+
+Before deploying, test that your Quran API credentials work:
+
+```powershell
+# Set environment variables (PowerShell)
+$env:QURAN_CLIENT_ID="your-client-id"
+$env:QURAN_CLIENT_SECRET="your-client-secret"
+
+# Install tsx for testing
+pnpm add -D tsx
+
+# Run the test script
+npx tsx src/quran/test.ts
+```
+
+You should see successful API calls like:
+```
+✅ Environment variables found
+✅ Quran client initialized
+📖 Test 1: Fetching Ayat al-Kursi (2:255)...
+✅ Success!
+```
+
+### 5. Deploy
+Deploy the MCP server to Cloudflare Workers:
+```bash
+npx wrangler deploy
+```
+
+### 6. Test with MCP Inspector
 
 Test the remote server using [Inspector](https://modelcontextprotocol.io/docs/tools/inspector): 
 
-```
+```bash
 npx @modelcontextprotocol/inspector@latest
 ```
-Enter `https://mcp-github-oauth.<your-subdomain>.workers.dev/sse` and hit connect. Once you go through the authentication flow, you'll see the Tools working: 
 
-<img width="640" alt="image" src="https://github.com/user-attachments/assets/7973f392-0a9d-4712-b679-6dd23f824287" />
+Enter `https://quran-mcp.<your-subdomain>.workers.dev/mcp` and connect.
 
-You now have a remote MCP server deployed! 
+### 7. Connect Claude Desktop
 
-### Access Control
+Open Claude Desktop: **Settings → Developer → Edit Config**
 
-This MCP server uses GitHub OAuth for authentication. All authenticated GitHub users can access basic tools like "add" and "userInfoOctokit".
+Add this configuration:
 
-The "generateImage" tool is restricted to specific GitHub users listed in the `ALLOWED_USERNAMES` configuration:
-
-```typescript
-// Add GitHub usernames for image generation access
-const ALLOWED_USERNAMES = new Set([
-  'yourusername',
-  'teammate1'
-]);
-```
-
-### Access the remote MCP server from Claude Desktop
-
-Open Claude Desktop and navigate to Settings -> Developer -> Edit Config. This opens the configuration file that controls which MCP servers Claude can access.
-
-Replace the content with the following configuration. Once you restart Claude Desktop, a browser window will open showing your OAuth login page. Complete the authentication flow to grant Claude access to your MCP server. After you grant access, the tools will become available for you to use. 
-
-```
+```json
 {
   "mcpServers": {
-    "math": {
+    "quran": {
       "command": "npx",
       "args": [
         "mcp-remote",
-        "https://mcp-github-oauth.<your-subdomain>.workers.dev/sse"
+        "https://quran-mcp.<your-subdomain>.workers.dev/mcp"
       ]
     }
   }
 }
 ```
 
-Once the Tools (under 🔨) show up in the interface, you can ask Claude to use them. For example: "Could you use the math tool to add 23 and 19?". Claude should invoke the tool and show the result generated by the MCP server.
+Restart Claude Desktop and authenticate with GitHub. You can now ask Claude:
+- "Get verse 2:255 from the Quran"
+- "Show me the first verse of Al-Fatiha with translation"
+- "What does verse 112:1 say?"
 
-### For Local Development
-If you'd like to iterate and test your MCP server, you can do so in local development. This will require you to create another OAuth App on GitHub: 
-- For the Homepage URL, specify `http://localhost:8788`
-- For the Authorization callback URL, specify `http://localhost:8788/callback`
+## 🧪 Local Development
+
+For local testing, create another GitHub OAuth App with:
+- Homepage URL: `http://localhost:8788`
+- Authorization callback URL: `http://localhost:8788/callback`
+
+Set local environment variables:
+```powershell
+$env:QURAN_CLIENT_ID="your-client-id"
+$env:QURAN_CLIENT_SECRET="your-client-secret"
+```
+
+Run the dev server:
+```bash
+pnpm dev
+```
+
+## 📚 Documentation
+
+- **[Quran Tools Documentation](src/quran/README.md)** - Detailed tool usage and API
+- **[Authentication Guide](AUTHENTICATION.md)** - Complete OAuth2 authentication setup and troubleshooting
+- **[Technical Integration](QURAN-INTEGRATION.md)** - Implementation details and architecture
+- **[Quran SDK Knowledge Base](knowledge-base/Quran-SDK-Knowledgebase.md)** - Complete SDK reference
+- **[Official API Docs](https://api-docs.quran.foundation/)** - Quran Foundation API
+
+## 🔐 Authentication
+
+The Quran API uses **OAuth2 Client Credentials** flow for authentication. The `@quranjs/api` SDK handles this **automatically**:
+
+- ✅ **Automatic token acquisition** on first request
+- ✅ **Token caching** for 1 hour (3600 seconds)
+- ✅ **Automatic renewal** when tokens expire
+- ✅ **Proper headers** (`x-auth-token`, `x-client-id`) sent with each request
+
+**No manual token management required!**
+
+See [AUTHENTICATION.md](AUTHENTICATION.md) for complete details on:
+- How OAuth2 authentication works
+- Environment configuration (production vs pre-production)
+- Troubleshooting common issues
+- Security best practices
+
+## 🔐 Security
+
+> [!WARNING]
+> While we have implemented security controls, **you must review and implement all security measures before production deployment**. See [Securing MCP Servers](https://github.com/cloudflare/agents/blob/main/docs/securing-mcp-servers.md).
+
+## 🛣️ Roadmap
+
+Planned features:
+- ✨ Search across Quran and translations
+- ✨ Get chapter information and metadata  
+- ✨ Fetch verses by Juz/Hizb/Page
+- ✨ Random verse (verse of the day)
+- ✨ List available translations and tafsirs
+- ✨ Audio recitation support
+
+See [src/quran/README.md](src/quran/README.md) for the full scaling guide.
+
+## 📄 License
+
+This project builds on the Cloudflare MCP template and integrates with the Quran Foundation API.
+
+## 🤝 Contributing
+
+Contributions welcome! Please:
+1. Test your changes with `npx tsx src/quran/test.ts`
+2. Follow the existing code structure in `src/quran/`
+3. Update documentation as needed
+
+---
+
+Built with ❤️ using:
+- [Model Context Protocol](https://modelcontextprotocol.io/)
+- [Quran Foundation API](https://quran.foundation/)
+- [Cloudflare Workers](https://workers.cloudflare.com/)
 - Note your Client ID and generate a Client secret. 
 - Create a `.dev.vars` file in your project root with: 
 ```

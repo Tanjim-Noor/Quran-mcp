@@ -1,3 +1,28 @@
+# Development Variables for Local Testing
+# Copy this file to `.dev.vars` and fill in your actual values
+# This file is used by:
+#   - `pnpm dev` (local MCP server)
+#   - `pnpm test:sdk` (SDK testing)
+# 
+# DO NOT commit .dev.vars to git (it's already in .gitignore)
+
+# GitHub OAuth (for local development)
+# Create a GitHub OAuth app with callback: http://localhost:8788/callback
 GITHUB_CLIENT_ID=<your github client id>
 GITHUB_CLIENT_SECRET=<your github client secret>
-COOKIE_ENCRYPTION_KEY=<your cookie cookie encryption key>
+
+# Cookie encryption key (generate with: openssl rand -hex 32)
+# Or use any random 64-character hex string
+COOKIE_ENCRYPTION_KEY=<your cookie encryption key>
+
+# Quran Foundation API
+# Get credentials from: https://quran.foundation/api-request
+# The SDK handles OAuth2 authentication automatically
+QURAN_CLIENT_ID=<your quran client id>
+QURAN_CLIENT_SECRET=<your quran client secret>
+
+# Quran API Environment (optional)
+# - production: Live API (default if not set)
+# - pre-production: Testing API
+# Warning: Credentials are environment-specific!
+QURAN_ENV=production

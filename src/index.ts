@@ -4,6 +4,9 @@ import { McpAgent } from "agents/mcp";
 import { Octokit } from "octokit";
 import { z } from "zod";
 import { GitHubHandler } from "./github-handler";
+import { Language } from "@quranjs/api";
+import { getQuranClient, QuranEnvironment } from "./quran/client";
+import { getVerse, getVerseSchema } from "./quran/tools";
 
 // Context from the auth process, encrypted & stored in the auth token
 // and provided to the DurableMCP as this.props
@@ -21,12 +24,45 @@ const ALLOWED_USERNAMES = new Set<string>([
 
 export class MyMCP extends McpAgent<Env, Record<string, never>, Props> {
 	server = new McpServer({
-		name: "Github OAuth Proxy Demo",
+		name: "Quran MCP Server with OAuth",
 		version: "1.0.0",
 	});
 
 	async init() {
-		// Hello, world!
+		// Determine Quran API environment from environment variable (if set)
+		// Default to production if not specified
+		// The environment variable can be set in:
+		// - .dev.vars file for local development (QURAN_ENV=pre-production)
+		// - Wrangler secrets for production (wrangler secret put QURAN_ENV)
+		const quranEnvStr = (this.env as any).QURAN_ENV?.toLowerCase();
+		const quranEnv = quranEnvStr === "pre-production"
+			? QuranEnvironment.PRE_PRODUCTION
+			: QuranEnvironment.PRODUCTION;
+
+		// Initialize Quran client with automatic OAuth2 token management
+		// The SDK will:
+		// 1. Obtain an access token using client credentials on first request
+		// 2. Cache the token for 1 hour (3600 seconds)
+		// 3. Automatically renew the token when it expires
+		// 4. Include proper authentication headers (x-auth-token, x-client-id) with each request
+		const quranClient = getQuranClient({
+			clientId: this.env.QURAN_CLIENT_ID,
+			clientSecret: this.env.QURAN_CLIENT_SECRET,
+			defaultLanguage: Language.ENGLISH,
+			environment: quranEnv,
+		});
+
+		// 🕌 Quran Tool: Get Verse by Key
+		this.server.tool(
+			"getVerse",
+			"Fetch a Quranic verse by its key (chapter:verse format, e.g., '2:255' for Ayat al-Kursi). Optionally include translations, word-by-word breakdown, and tafsir (commentary).",
+			getVerseSchema.shape,
+			async (params) => {
+				return await getVerse(quranClient, params);
+			},
+		);
+
+		// Hello, world! (kept for demo purposes)
 		this.server.tool(
 			"add",
 			"Add two numbers the way only MCP can",
