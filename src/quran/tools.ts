@@ -21,7 +21,7 @@ export const getVerseSchema = z.object({
 		.array(z.number())
 		.optional()
 		.describe(
-			"Array of translation IDs to include (e.g., [20] for English Sahih International, [131] for Urdu)"
+			"Array of translation IDs to include (e.g., [20] for English Sahih International, [131] for Urdu). Common IDs: 20=English Sahih International, 131=Urdu, 203=English Clear Quran. Pass multiple IDs like [20, 131] for multiple translations."
 		),
 	includeWords: z
 		.boolean()
@@ -32,11 +32,11 @@ export const getVerseSchema = z.object({
 		.boolean()
 		.optional()
 		.default(false)
-		.describe("Whether to include tafsir (commentary) for the verse"),
+		.describe("Whether to include tafsir (commentary) for the verse. Set to true to enable tafsir."),
 	tafsirIds: z
 		.array(z.number())
 		.optional()
-		.describe("Array of tafsir IDs to include (e.g., [171] for Tafsir Ibn Kathir)"),
+		.describe("Array of tafsir IDs to include (e.g., [171] for Tafsir Ibn Kathir). Only used when includeTafsir is true."),
 });
 
 export type GetVerseParams = z.infer<typeof getVerseSchema>;
@@ -57,6 +57,7 @@ export async function getVerse(client: QuranClient, params: GetVerseParams) {
 			translations: translations,
 			words: includeWords,
 			tafsirs: includeTafsir && tafsirIds ? tafsirIds : undefined,
+			fields: { textUthmani: true }, // Always include Arabic text
 		});
 
 		// Format the response

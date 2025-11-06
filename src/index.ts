@@ -56,7 +56,33 @@ export class MyMCP extends McpAgent<Env, Record<string, never>, Props> {
 		this.server.tool(
 			"getVerse",
 			"Fetch a Quranic verse by its key (chapter:verse format, e.g., '2:255' for Ayat al-Kursi). Optionally include translations, word-by-word breakdown, and tafsir (commentary).",
-			getVerseSchema.shape,
+			{
+				verseKey: z
+					.string()
+					.describe(
+						"The verse key in 'chapter:verse' format (e.g., '2:255' for Ayat al-Kursi, '1:1' for first verse of Al-Fatiha)"
+					),
+				translations: z
+					.array(z.number())
+					.optional()
+					.describe(
+						"Array of translation IDs to include (e.g., [20] for English Sahih International, [131] for Urdu). Common IDs: 20=English Sahih International, 131=Urdu, 203=English Clear Quran. Pass multiple IDs like [20, 131] for multiple translations."
+					),
+				includeWords: z
+					.boolean()
+					.optional()
+					.default(false)
+					.describe("Whether to include word-by-word breakdown of the verse"),
+				includeTafsir: z
+					.boolean()
+					.optional()
+					.default(false)
+					.describe("Whether to include tafsir (commentary) for the verse. Set to true to enable tafsir."),
+				tafsirIds: z
+					.array(z.number())
+					.optional()
+					.describe("Array of tafsir IDs to include (e.g., [171] for Tafsir Ibn Kathir). Only used when includeTafsir is true."),
+			},
 			async (params) => {
 				return await getVerse(quranClient, params);
 			},
