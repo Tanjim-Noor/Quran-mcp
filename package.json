@@ -9,7 +9,8 @@
     "cf-typegen": "wrangler types",
     "type-check": "tsc --noEmit",
     "test:sdk": "tsx src/quran/test.ts",
-    "test:sdk:raw": "tsx src/quran/test_raw.ts"
+    "test:sdk:raw": "tsx src/quran/test_raw.ts",
+    "test:sdk:resources": "tsx src/quran/test_resources.ts"
   },
   "dependencies": {
     "@cloudflare/workers-oauth-provider": "^0.0.13",
