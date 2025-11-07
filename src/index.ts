@@ -6,7 +6,7 @@ import { z } from "zod";
 import { GitHubHandler } from "./github-handler";
 import { Language } from "@quranjs/api";
 import { getQuranClient, QuranEnvironment } from "./quran/client";
-import { getVerse, getVerseSchema } from "./quran/tools";
+import { getVerse, getVerseSchema, getAvailableTranslations, getAvailableTranslationsSchema } from "./quran/tools";
 
 // Context from the auth process, encrypted & stored in the auth token
 // and provided to the DurableMCP as this.props
@@ -55,7 +55,7 @@ export class MyMCP extends McpAgent<Env, Record<string, never>, Props> {
 		// 🕌 Quran Tool: Get Verse by Key
 		this.server.tool(
 			"getVerse",
-			"Fetch a Quranic verse by its key (chapter:verse format, e.g., '2:255' for Ayat al-Kursi). Optionally include translations, word-by-word breakdown, and tafsir (commentary).",
+			"Fetch a Quranic verse by its key (chapter:verse format, e.g., '2:255' for Ayat al-Kursi). Optionally include translations, word-by-word breakdown, and tafsir (commentary). NOTE: To find available translation IDs, use the getAvailableTranslations tool first.",
 			{
 				verseKey: z
 					.string()
@@ -66,7 +66,7 @@ export class MyMCP extends McpAgent<Env, Record<string, never>, Props> {
 					.array(z.number())
 					.optional()
 					.describe(
-						"Array of translation IDs to include (e.g., [20] for English Sahih International, [131] for Urdu). Common IDs: 20=English Sahih International, 131=Urdu, 203=English Clear Quran. Pass multiple IDs like [20, 131] for multiple translations."
+						"Array of translation IDs to include. First use getAvailableTranslations tool to discover available IDs. Common IDs: 20=English Sahih International, 234=Urdu Jalandhari, 85=English Abdel Haleem. Pass multiple IDs like [20, 234] for multiple translations."
 					),
 				includeWords: z
 					.boolean()
@@ -85,6 +85,23 @@ export class MyMCP extends McpAgent<Env, Record<string, never>, Props> {
 			},
 			async (params) => {
 				return await getVerse(quranClient, params);
+			},
+		);
+
+		// 🕌 Quran Tool: Get Available Translations
+		this.server.tool(
+			"getAvailableTranslations",
+			"Get all available Quran translations with their IDs, optionally filtered by language. Use this to find translation IDs before calling getVerse.",
+			{
+				language: z
+					.string()
+					.optional()
+					.describe(
+						"Filter translations by language (e.g., 'english', 'urdu', 'arabic', 'spanish', 'french'). Leave empty to get all available translations."
+					),
+			},
+			async (params) => {
+				return await getAvailableTranslations(quranClient, params);
 			},
 		);
 
