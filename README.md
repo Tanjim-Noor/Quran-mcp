@@ -2,6 +2,19 @@
 
 This is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) server that provides access to the Quran Foundation API with GitHub OAuth authentication. Users can query Quranic verses, translations, tafsir (commentary), and more through natural language interactions.
 
+---
+
+### 📖 Quick Links for Contributors
+
+| Getting Started | Community |
+|---|---|
+| 📋 [Code of Conduct](CODE_OF_CONDUCT.md) | 🐛 [Report a Bug](https://github.com/Tanjim-Noor/Quran-mcp/issues/new?template=bug_report.md) |
+| 🤝 [Contributing Guide](CONTRIBUTING.md) | ✨ [Request a Feature](https://github.com/Tanjim-Noor/Quran-mcp/issues/new?template=feature_request.md) |
+| 🔀 [PR Template Guide](.github/PULL_REQUEST_TEMPLATE/pull_request_template.md) | 📝 [Suggest Documentation](https://github.com/Tanjim-Noor/Quran-mcp/issues/new?template=documentation.md) |
+| 🔒 [Security Policy](SECURITY.md) | 💬 [Discussions](https://github.com/Tanjim-Noor/Quran-mcp/discussions) |
+
+---
+
 ## 🕌 Features
 
 - **Translation Discovery**: Browse 125+ translations across 56+ languages
@@ -235,12 +248,45 @@ See [src/quran/README.md](src/quran/README.md) for the full scaling guide.
 
 This project builds on the Cloudflare MCP template and integrates with the Quran Foundation API.
 
-## 🤝 Contributing
+## 🤝 Contributing & Community
 
-Contributions welcome! Please:
-1. Test your changes with `npx tsx src/quran/test.ts`
-2. Follow the existing code structure in `src/quran/`
-3. Update documentation as needed
+We welcome contributions from the community! Here's how to get involved:
+
+### 📋 Before Contributing
+- **Read our [Code of Conduct](CODE_OF_CONDUCT.md)** - Please be respectful and inclusive
+- **Review [CONTRIBUTING.md](CONTRIBUTING.md)** - Complete guide on how to contribute, code style, and commit conventions
+
+### 🐛 Report a Bug
+Found an issue? Use our [bug report template](https://github.com/Tanjim-Noor/Quran-mcp/issues/new?template=bug_report.md) to help us understand and fix it quickly.
+
+### ✨ Request a Feature
+Have an idea? Share it using our [feature request template](https://github.com/Tanjim-Noor/Quran-mcp/issues/new?template=feature_request.md).
+
+### 📝 Improve Documentation
+Spotted unclear documentation? Use our [documentation issue template](https://github.com/Tanjim-Noor/Quran-mcp/issues/new?template=documentation.md).
+
+### 🔀 Submit Code Changes
+
+1. **Fork the repository** and create your feature branch
+2. **Follow our guidelines**:
+   - Test your changes: `pnpm type-check && pnpm test:sdk`
+   - Follow code style guidelines (TypeScript, camelCase, JSDoc comments)
+   - Reference related issues in your commits
+3. **Create a Pull Request** using our [PR template](.github/PULL_REQUEST_TEMPLATE/pull_request_template.md)
+4. **Address feedback** from reviewers
+5. **Celebrate** when merged! 🎉
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed step-by-step instructions.
+
+### 🔒 Security
+
+Found a security vulnerability? Please **do not** open a public issue. Instead, follow our [Security Policy](SECURITY.md) for responsible disclosure.
+
+### 💬 Questions or Discussion?
+
+- Open an issue with the `question` label
+- Check the [knowledge-base/](knowledge-base/) for existing documentation
+- Join [GitHub Discussions](https://github.com/Tanjim-Noor/Quran-mcp/discussions)
 
 ---
 
@@ -283,3 +329,21 @@ The MCP Remote library enables your server to expose tools that can be invoked b
 - Provides a structured way to define tools
 - Handles serialization and deserialization of requests and responses
 - Maintains the Server-Sent Events (SSE) connection between clients and your server
+
+## 📖 Additional Resources
+
+- **[Code of Conduct](CODE_OF_CONDUCT.md)** - Community standards and expectations
+- **[Contributing Guide](CONTRIBUTING.md)** - How to contribute code, report bugs, and request features
+- **[GitHub Issues](https://github.com/Tanjim-Noor/Quran-mcp/issues)** - Report bugs using our templates
+- **[GitHub Discussions](https://github.com/Tanjim-Noor/Quran-mcp/discussions)** - Ask questions and discuss ideas
+
+## 📄 License
+
+This project is licensed under the **[MIT License](LICENSE)**.
+
+---
+
+Built with ❤️ using:
+- [Model Context Protocol](https://modelcontextprotocol.io/)
+- [Quran Foundation API](https://quran.foundation/)
+- [Cloudflare Workers](https://workers.cloudflare.com/)

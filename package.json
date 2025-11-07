@@ -1,7 +1,34 @@
 {
-  "name": "remote-mcp-github-oauth",
+  "name": "quran-mcp",
   "version": "0.0.1",
-  "private": true,
+  "description": "A Model Context Protocol (MCP) server providing access to the Quran Foundation API with GitHub OAuth authentication. Query Quranic verses, translations, tafsir, and word analysis through natural language.",
+  "license": "MIT",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Tanjim-Noor/Quran-mcp.git"
+  },
+  "keywords": [
+    "quran",
+    "quran-api",
+    "mcp",
+    "model-context-protocol",
+    "oauth",
+    "github",
+    "cloudflare-workers",
+    "tafsir",
+    "islamic",
+    "quranic",
+    "translation",
+    "quran-foundation",
+    "ai",
+    "nlp"
+  ],
+  "author": "Quran MCP Contributors",
+  "bugs": {
+    "url": "https://github.com/Tanjim-Noor/Quran-mcp/issues"
+  },
+  "homepage": "https://github.com/Tanjim-Noor/Quran-mcp#readme",
   "scripts": {
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",

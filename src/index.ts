@@ -17,9 +17,25 @@ type Props = {
 	accessToken: string;
 };
 
+/**
+ * ALLOWED_USERNAMES: GitHub usernames that have access to demo/restricted tools
+ * 
+ * The image generation demo tool (generateImage) is only available to users
+ * in this Set. This demonstrates how to implement access control in MCP servers.
+ * 
+ * To enable for your account:
+ * 1. Find your GitHub username
+ * 2. Add it to this Set: ALLOWED_USERNAMES.add('yourusername');
+ * 
+ * Example:
+ *   const ALLOWED_USERNAMES = new Set<string>(['username1', 'username2']);
+ * 
+ * For production deployments, consider using role-based access control
+ * or environment-based configuration instead of hardcoding usernames.
+ */
 const ALLOWED_USERNAMES = new Set<string>([
-	// Add GitHub usernames of users who should have access to the image generation tool
-	// For example: 'yourusername', 'coworkerusername'
+	// Add GitHub usernames here to enable restricted tools for those users
+	// Example: 'Tanjim-Noor', 'another-user'
 ]);
 
 export class MyMCP extends McpAgent<Env, Record<string, never>, Props> {
@@ -105,20 +121,29 @@ export class MyMCP extends McpAgent<Env, Record<string, never>, Props> {
 			},
 		);
 
-		// Hello, world! (kept for demo purposes)
+		// ===== DEMO TOOLS (for testing/demonstration purposes) =====
+		// These tools are kept for reference and testing. They are not core functionality.
+		// To enable these demo tools in production, modify the conditions below.
+
+		// Demo Tool 1: Simple Math Addition
+		// Purpose: Basic demonstration of MCP tool architecture
+		// Status: Demo only
 		this.server.tool(
 			"add",
-			"Add two numbers the way only MCP can",
+			"[DEMO] Add two numbers - demonstration tool for MCP architecture",
 			{ a: z.number(), b: z.number() },
 			async ({ a, b }) => ({
 				content: [{ text: String(a + b), type: "text" }],
 			}),
 		);
 
-		// Use the upstream access token to facilitate tools
+		// Demo Tool 2: Get GitHub User Info via OAuth
+		// Purpose: Demonstrates OAuth integration with GitHub Octokit
+		// Status: Demo only - uses authenticated user's token
+		// Note: For production use, consider security implications
 		this.server.tool(
 			"userInfoOctokit",
-			"Get user info from GitHub, via Octokit",
+			"[DEMO] Get authenticated user info from GitHub - OAuth integration demo",
 			{},
 			async () => {
 				const octokit = new Octokit({ auth: this.props!.accessToken });
@@ -133,12 +158,15 @@ export class MyMCP extends McpAgent<Env, Record<string, never>, Props> {
 			},
 		);
 
-		// Dynamically add tools based on the user's login. In this case, I want to limit
-		// access to my Image Generation tool to just me
+		// Demo Tool 3: AI Image Generation
+		// Purpose: Demonstrates integration with Cloudflare Workers AI
+		// Status: Demo only - restricted to ALLOWED_USERNAMES
+		// Note: Requires Cloudflare AI binding configured in wrangler.jsonc
+		// To enable, add GitHub usernames to ALLOWED_USERNAMES Set at the top of this file
 		if (ALLOWED_USERNAMES.has(this.props!.login)) {
 			this.server.tool(
 				"generateImage",
-				"Generate an image using the `flux-1-schnell` model. Works best with 8 steps.",
+				"[DEMO] Generate an image using Cloudflare Workers AI - image generation demo",
 				{
 					prompt: z
 						.string()
@@ -164,6 +192,7 @@ export class MyMCP extends McpAgent<Env, Record<string, never>, Props> {
 				},
 			);
 		}
+		// ===== END DEMO TOOLS =====
 	}
 }
 
