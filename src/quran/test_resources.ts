@@ -38,7 +38,7 @@ const TESTS = {
     getRecitationInfo: false,
 
     // Translations API
-    getAllTranslations: true,
+    getAllTranslations: false,
     getTranslationInfo: false,
 
     // Tafsirs API
@@ -190,8 +190,7 @@ async function runTests() {
       console.log(`✅ Found ${tafsirs.length} tafsirs`);
       
       // Show first 5
-      console.log("First 5 tafsirs:");
-      console.log(tafsirs.slice(0, 5));
+      console.log(tafsirs);
       console.log("");
     } catch (error: any) {
       console.error("❌ Failed to fetch all tafsirs");

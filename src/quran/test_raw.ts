@@ -98,7 +98,7 @@ async function runTests() {
   console.log("=== Test 3: Verse with Translation and Tafsir (1:1) ===");
   try {
     const verse = await client.verses.findByKey("1:1", {
-      tafsirs: [171],
+      tafsirs: [817],
       translations: [20],
     });
     console.log(verse);
@@ -192,7 +192,6 @@ async function runTests() {
   console.log("=== Test 8: Verse Fields Selection (1:1) ===");
   try {
     const verse = await client.verses.findByKey("1:1", {
-      tafsirs: [171],
       fields: {
         textUthmani: true,
         textUthmaniTajweed: true,
