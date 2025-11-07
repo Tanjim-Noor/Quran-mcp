@@ -143,7 +143,11 @@ Deploy the MCP server to Cloudflare Workers:
 npx wrangler deploy
 ```
 
-### 6. Test with MCP Inspector
+### 6. Connect MCP Clients
+
+Once deployed, you can connect various MCP clients to your server. Replace `<your-subdomain>` with your actual Cloudflare Workers subdomain.
+
+#### 🔍 MCP Inspector (Testing & Debugging)
 
 Test the remote server using [Inspector](https://modelcontextprotocol.io/docs/tools/inspector): 
 
@@ -153,7 +157,11 @@ npx @modelcontextprotocol/inspector@latest
 
 Enter `https://quran-mcp.<your-subdomain>.workers.dev/mcp` and connect.
 
-### 7. Connect Claude Desktop
+---
+
+#### 🤖 Claude Desktop
+
+**Location:** `%APPDATA%\Claude\claude_desktop_config.json` (Windows) or `~/Library/Application Support/Claude/claude_desktop_config.json` (Mac)
 
 Open Claude Desktop: **Settings → Developer → Edit Config**
 
@@ -173,11 +181,95 @@ Add this configuration:
 }
 ```
 
-Restart Claude Desktop and authenticate with GitHub. You can now ask Claude:
+**Restart Claude Desktop** and authenticate with GitHub. You can now ask Claude:
 - "What English translations are available?"
 - "Get verse 2:255 from the Quran with English translation"
 - "Show me the first verse of Al-Fatiha with Urdu translation"
 - "What does verse 112:1 say?"
+
+---
+
+#### ⚡ Cursor
+
+**Location:** `.vscode/mcp.json` in your workspace
+
+Create or edit `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "https://quran-mcp.<your-subdomain>.workers.dev": {
+      "url": "https://quran-mcp.<your-subdomain>.workers.dev/sse",
+      "type": "http"
+    }
+  },
+  "inputs": []
+}
+```
+
+**Note:** Cursor uses the `/sse` (Server-Sent Events) endpoint.
+
+**Restart Cursor** and authenticate with GitHub when prompted. The Quran tools will be available in Cursor's AI chat.
+
+---
+
+#### 🔷 GitHub Copilot (VS Code)
+
+**Location:** `.vscode/mcp.json` in your workspace
+
+Same configuration as Cursor:
+
+```json
+{
+  "servers": {
+    "https://quran-mcp.<your-subdomain>.workers.dev": {
+      "url": "https://quran-mcp.<your-subdomain>.workers.dev/sse",
+      "type": "http"
+    }
+  },
+  "inputs": []
+}
+```
+
+**Reload VS Code** (`Ctrl+Shift+P` → "Developer: Reload Window") and authenticate with GitHub. The tools will be available when using GitHub Copilot Chat.
+
+---
+
+#### 📱 Other MCP Clients
+
+For other MCP-compatible clients, use one of these endpoints:
+
+- **Modern clients (Streamable HTTP):** `https://quran-mcp.<your-subdomain>.workers.dev/mcp`
+- **Legacy clients (SSE):** `https://quran-mcp.<your-subdomain>.workers.dev/sse`
+
+---
+
+#### 🔐 Authentication Flow
+
+All clients will redirect you to GitHub OAuth for authentication:
+
+1. Click the authorization link provided by the client
+2. Approve the GitHub OAuth app
+3. You'll be redirected back to the MCP server
+4. Authentication complete! Start querying Quranic verses
+
+---
+
+### 7. Example Queries
+
+Once connected, try these natural language queries:
+
+**Translation Discovery:**
+- "What English translations are available?"
+- "Show me all Urdu translations"
+- "List available Quran translations for Spanish"
+
+**Verse Retrieval:**
+- "Get verse 2:255 from the Quran" (Ayat al-Kursi)
+- "Show me verse 1:1 with English translation"
+- "Get Surah Al-Ikhlas (chapter 112) with Urdu translation"
+- "What does verse 18:10 say with word-by-word breakdown?"
+- "Get verse 2:255 with tafsir (commentary)"
 
 ## 🧪 Local Development
 
