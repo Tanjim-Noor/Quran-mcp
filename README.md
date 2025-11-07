@@ -4,6 +4,7 @@ This is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introdu
 
 ## 🕌 Features
 
+- **Translation Discovery**: Browse 125+ translations across 56+ languages
 - **Verse Retrieval**: Fetch any verse with Arabic text, translations, and metadata
 - **Multiple Translations**: Support for 100+ translations in various languages
 - **Word-by-Word Analysis**: Get detailed word breakdowns of verses
@@ -13,13 +14,27 @@ This is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introdu
 
 ## 🚀 Available Tools
 
+### `getAvailableTranslations`
+Discover available Quran translations and their IDs for use with `getVerse`.
+
+**Example queries:**
+- "What English translations are available?"
+- "Show me all Urdu translations"
+- "List all available Quran translations"
+
+**Supported languages:** English, Urdu, Arabic, Spanish, French, Turkish, Bengali, Indonesian, Russian, Persian, and 40+ more languages with 125+ total translations.
+
 ### `getVerse`
-Fetch Quranic verses with optional translations, word analysis, and tafsir.
+Fetch Quranic verses with optional translations, word analysis, and tafsir. Use `getAvailableTranslations` first to discover translation IDs.
 
 **Example queries:**
 - "Get verse 2:255 from the Quran" (Ayat al-Kursi)
-- "Show me verse 1:1 with English translation"
-- "Get verse 112:1 with word-by-word breakdown"
+- "Show me verse 1:1 with English translation ID 20"
+- "Get verse 112:1 with word-by-word breakdown and translation"
+
+**Workflow:**
+1. Use `getAvailableTranslations` to find translation IDs
+2. Use `getVerse` with the discovered IDs
 
 See [src/quran/README.md](src/quran/README.md) for detailed documentation.
 
@@ -104,6 +119,11 @@ You should see successful API calls like:
 ✅ Success!
 ```
 
+To test the new translation discovery tool:
+```bash
+pnpm test:sdk:translations
+```
+
 ### 5. Deploy
 Deploy the MCP server to Cloudflare Workers:
 ```bash
@@ -141,8 +161,9 @@ Add this configuration:
 ```
 
 Restart Claude Desktop and authenticate with GitHub. You can now ask Claude:
-- "Get verse 2:255 from the Quran"
-- "Show me the first verse of Al-Fatiha with translation"
+- "What English translations are available?"
+- "Get verse 2:255 from the Quran with English translation"
+- "Show me the first verse of Al-Fatiha with Urdu translation"
 - "What does verse 112:1 say?"
 
 ## 🧪 Local Development
@@ -165,9 +186,11 @@ pnpm dev
 ## 📚 Documentation
 
 - **[Quran Tools Documentation](src/quran/README.md)** - Detailed tool usage and API
+- **[Translation Tool Guide](src/quran/TRANSLATIONS-TOOL.md)** - How to discover and use translation IDs
 - **[Authentication Guide](AUTHENTICATION.md)** - Complete OAuth2 authentication setup and troubleshooting
 - **[Technical Integration](QURAN-INTEGRATION.md)** - Implementation details and architecture
 - **[Quran SDK Knowledge Base](knowledge-base/Quran-SDK-Knowledgebase.md)** - Complete SDK reference
+- **[Available Resources](knowledge-base/AVAILABLE-RESOURCES.md)** - Complete list of translations and tafsirs
 - **[Official API Docs](https://api-docs.quran.foundation/)** - Quran Foundation API
 
 ## 🔐 Authentication
@@ -194,12 +217,16 @@ See [AUTHENTICATION.md](AUTHENTICATION.md) for complete details on:
 
 ## 🛣️ Roadmap
 
+Implemented features:
+- ✅ Verse retrieval with translations, word-by-word, and tafsir
+- ✅ List available translations by language
+
 Planned features:
+- ✨ List available tafsirs (commentaries)
 - ✨ Search across Quran and translations
 - ✨ Get chapter information and metadata  
 - ✨ Fetch verses by Juz/Hizb/Page
 - ✨ Random verse (verse of the day)
-- ✨ List available translations and tafsirs
 - ✨ Audio recitation support
 
 See [src/quran/README.md](src/quran/README.md) for the full scaling guide.
@@ -233,18 +260,6 @@ Run the server locally to make it available at `http://localhost:8788`
 `wrangler dev`
 
 To test the local server, enter `http://localhost:8788/sse` into Inspector and hit connect. Once you follow the prompts, you'll be able to "List Tools". 
-
-#### Using Claude and other MCP Clients
-
-When using Claude to connect to your remote MCP server, you may see some error messages. This is because Claude Desktop doesn't yet support remote MCP servers, so it sometimes gets confused. To verify whether the MCP server is connected, hover over the 🔨 icon in the bottom right corner of Claude's interface. You should see your tools available there.
-
-#### Using Cursor and other MCP Clients
-
-To connect Cursor with your MCP server, choose `Type`: "Command" and in the `Command` field, combine the command and args fields into one (e.g. `npx mcp-remote https://<your-worker-name>.<your-subdomain>.workers.dev/sse`).
-
-Note that while Cursor supports HTTP+SSE servers, it doesn't support authentication, so you still need to use `mcp-remote` (and to use a STDIO server, not an HTTP one).
-
-You can connect your MCP server to other MCP clients like Windsurf by opening the client's configuration file, adding the same JSON that was used for the Claude setup, and restarting the MCP client.
 
 ## How does it work? 
 
